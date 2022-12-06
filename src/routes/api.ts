@@ -30,7 +30,6 @@ authRouter.get(authRoutes.paths.logout, authRoutes.logout);
 // Add authRouter
 apiRouter.use(authRoutes.paths.basePath, authRouter);
 
-
 // **** Setup user routes **** //
 
 const userRouter = Router();
