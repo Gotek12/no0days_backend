@@ -41,3 +41,10 @@ Run production build with a different env file.
 ## Additional Notes
 
 - If `npm run dev` gives you issues with bcrypt on MacOS you may need to run: `npm rebuild bcrypt --build-from-source`. 
+
+
+## Database creation
+
+```test> use no0days```
+
+```no0days> db.user.insert({name: "User1", email: "email@email.com", passsword: "abc", active: true})```
