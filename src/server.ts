@@ -10,20 +10,18 @@ import EnvVars from '@src/declarations/major/EnvVars';
 import HttpStatusCodes from '@src/declarations/major/HttpStatusCodes';
 import { NodeEnvs } from '@src/declarations/enums';
 import { RouteError } from '@src/declarations/classes';
-import connect from "@src/connect";
+import connect from "@src/db-connect";
 import {
   addUser,
   getUsers,
   getUser,
   deleteUser, updateUser,
-} from "@src/controller/user_controller";
-
-// **** Init express **** //
+} from "@src/controller/user-controller";
 
 // Connect to mongoDB //
+connect();
 
-const dbURI = "mongodb://localhost:27017/no0days";
-connect(dbURI);
+// **** Init express **** //
 
 const app = express();
 
@@ -60,10 +58,6 @@ app.use((
   }
   return res.status(status).json({ error: err.message });
 });
-
-// Set static directory (js and css).
-const staticDir = path.join(__dirname, 'public');
-app.use(express.static(staticDir));
 
 // Nav to login pg by default
 app.get('/', (_: Request, res: Response) => {
