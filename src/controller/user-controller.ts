@@ -1,5 +1,5 @@
 import express, { Request, Response } from 'express';
-import { addNewUser, allUsers, findUser, deleteDBUser, updateDBUser } from '@src/service/user_service';
+import { addNewUser, allUsers, findUser, deleteDBUser, updateDBUser } from '@src/service/user-service';
 
 export const userRoute = express.Router();
 
