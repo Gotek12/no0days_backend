@@ -1,30 +1,28 @@
-import {Request, Response} from 'express';
-import {
-  addNewUser,
-  allUsers,
-  findUser,
-  deleteDBUser,
-  updateDBUser,
-} from "@src/service/user_service";
+import express, { Request, Response } from 'express';
+import { addNewUser, allUsers, findUser, deleteDBUser, updateDBUser } from '@src/service/user_service';
 
+export const userRoute = express.Router();
 
-export const getUsers = (req: Request, res: Response) => {
-  return allUsers(req, res);
-};
+userRoute.get('/test', (req: Request, res: Response) => {
+  res.send({ message: 'user-controller' });
+});
 
-export const getUser = (req: Request, res: Response) => {
-  return findUser(req, res);
-};
+userRoute.get('/', (req: Request, res: Response) => {
+  res.send(allUsers(req, res));
+});
 
-export const addUser =  (req: Request, res: Response) => {
-  return addNewUser(req, res);
-};
+userRoute.get('/:userName', (req: Request, res: Response) => {
+  res.send(findUser(req, res));
+});
 
-export const deleteUser = (req: Request, res: Response) => {
-  return deleteDBUser(req, res);
-};
+userRoute.post('/', (req: Request, res: Response) => {
+  res.send(addNewUser(req, res));
+});
 
-export const updateUser = (req: Request, res: Response) => {
-  return updateDBUser(req, res);
-};
+userRoute.delete('/:userName', (req: Request, res: Response) => {
+  res.send(deleteDBUser(req, res));
+});
 
+userRoute.patch('/:userID', (req: Request, res: Response) => {
+  res.send(updateDBUser(req, res));
+});

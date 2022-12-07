@@ -1,17 +1,20 @@
-import mongoose from "mongoose";
+import mongoose from 'mongoose';
 
-const dbURI = "mongodb://localhost:27017/no0days";
+const dbURI = 'mongodb://localhost:27017/no0days';
 
+/* eslint-disable no-console */
 export default (db = dbURI) => {
   const connect = () => {
-    mongoose.connect(db).then(() => {
-      return console.log('Succesfully connected to: ', db);
-    })
+    mongoose
+      .connect(db)
+      .then(() => {
+        return console.log('Succesfully connected to: ', db);
+      })
       .catch((err: any) => {
-        return console.log("Error connecting to database: ", err);
+        return console.log('Error connecting to database: ', err);
       });
   };
 
   connect();
-  mongoose.connection.on("disconnected", connect);
+  mongoose.connection.on('disconnected', connect);
 };
