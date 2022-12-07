@@ -1,5 +1,5 @@
 import express, { Request, Response } from 'express';
-import { addNewUser, allUsers, findUser, deleteDBUser, updateDBUser } from '@src/service/user-service';
+import { addNewUser, allUsers, findUser, deleteUser, updateUser } from '@src/service/user-service';
 
 export const userRoute = express.Router();
 
@@ -20,9 +20,9 @@ userRoute.post('/', (req: Request, res: Response) => {
 });
 
 userRoute.delete('/:userName', (req: Request, res: Response) => {
-  res.send(deleteDBUser(req, res));
+  res.send(deleteUser(req, res));
 });
 
 userRoute.patch('/:userID', (req: Request, res: Response) => {
-  res.send(updateDBUser(req, res));
+  res.send(updateUser(req, res));
 });

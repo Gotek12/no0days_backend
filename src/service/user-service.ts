@@ -1,8 +1,8 @@
 import { Request, Response } from 'express';
-import User from '@src/model/user';
+import UserModel, { User } from '@src/model/userModel';
 
 export const allUsers = (req: Request, res: Response) => {
-  return User.find((err: any, users: any) => {
+  return UserModel.find((err: any, users: User[]) => {
     if (err) {
       res.send(err);
     } else {
@@ -12,7 +12,7 @@ export const allUsers = (req: Request, res: Response) => {
 };
 
 export const findUser = (req: Request, res: Response) => {
-  return User.find({ name: req.params.userName }, (err: any, user: any) => {
+  return UserModel.find({ name: req.params.userName }, (err: any, user: User[]) => {
     if (err) {
       res.send(err);
     } else {
@@ -22,7 +22,7 @@ export const findUser = (req: Request, res: Response) => {
 };
 
 export const addNewUser = (req: Request, res: Response) => {
-  const user = new User(req.body);
+  const user = new UserModel(req.body);
   user.save((err: any) => {
     if (err) {
       res.send(err);
@@ -32,8 +32,8 @@ export const addNewUser = (req: Request, res: Response) => {
   });
 };
 
-export const deleteDBUser = (req: Request, res: Response) => {
-  return User.findOneAndDelete({ name: req.params.userName }, (err: any) => {
+export const deleteUser = (req: Request, res: Response) => {
+  return UserModel.findOneAndDelete({ name: req.params.userName }, (err: any) => {
     if (err) {
       res.send(err);
     } else {
@@ -42,17 +42,14 @@ export const deleteDBUser = (req: Request, res: Response) => {
   });
 };
 
-export const updateDBUser = (req: Request, res: Response) => {
-  return User.findByIdAndUpdate(
-    req.params.userID,
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-    req.body,
-    (err: any, user: any) => {
-      if (err) {
-        res.send(err);
-      } else {
-        res.send(user);
-      }
-    },
-  );
+/* eslint-disable @typescript-eslint/no-unsafe-argument*/
+export const updateUser = (req: Request, res: Response) => {
+  return UserModel.findByIdAndUpdate(req.params.userID, req.body, (err: any, user: User) => {
+    if (err) {
+      res.send(err);
+    } else {
+      res.send(user);
+    }
+  });
 };
+/* eslint-enable */
