@@ -10,8 +10,20 @@ import EnvVars from '@src/declarations/major/EnvVars';
 import HttpStatusCodes from '@src/declarations/major/HttpStatusCodes';
 import { NodeEnvs } from '@src/declarations/enums';
 import { RouteError } from '@src/declarations/classes';
+import connect from "@src/connect";
+import {
+  addUser,
+  getUsers,
+  getUser,
+  deleteUser, updateUser,
+} from "@src/controller/user_controller";
 
 // **** Init express **** //
+
+// Connect to mongoDB //
+
+const dbURI = "mongodb://localhost:27017/no0days";
+connect(dbURI);
 
 const app = express();
 
@@ -55,13 +67,28 @@ app.use(express.static(staticDir));
 
 // Nav to login pg by default
 app.get('/', (_: Request, res: Response) => {
-  res.json({"message": "hell"});
+  res.json({"message": "hello"});
 });
 
-// app.get('/users', (req: Request, res: Response) => {
-//
-// });
+app.get('/users', (req: Request, res: Response) => {
+  getUsers(req, res);
+});
 
+app.get('/users/:userName', (req: Request, res: Response) => {
+  getUser(req, res);
+});
+
+app.post('/users', (req: Request, res: Response) => {
+  addUser(req, res);
+});
+
+app.delete('/delete-user/:userName', (req: Request, res: Response) => {
+  deleteUser(req, res);
+});
+
+app.patch("/users/:userID", (req: Request, res: Response) => {
+  updateUser(req, res);
+});
 
 // **** Export default **** //
 export default app;
