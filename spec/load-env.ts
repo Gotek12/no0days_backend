@@ -1,6 +1,5 @@
 import dotenv from 'dotenv';
 
-
 // **** Load test env file **** //
 
 const result2 = dotenv.config({

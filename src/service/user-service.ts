@@ -1,55 +1,64 @@
-import { Request, Response } from 'express';
+import { NextFunction, Request, Response } from 'express';
 import UserModel, { User } from '@src/model/userModel';
+import mongoose from 'mongoose';
 
-export const allUsers = (req: Request, res: Response) => {
-  return UserModel.find((err: any, users: User[]) => {
-    if (err) {
-      res.send(err);
-    } else {
-      res.send(users);
+export const allUsers = async (req: Request, res: Response, next: NextFunction) => {
+  const users = await UserModel.find();
+  try {
+    return users;
+  } catch (error) {
+    if (error) {
+      next(error);
     }
-  });
+  }
 };
 
-export const findUser = (req: Request, res: Response) => {
-  return UserModel.find({ name: req.params.userName }, (err: any, user: User[]) => {
-    if (err) {
-      res.send(err);
-    } else {
-      res.send(user);
+export const findUser = async (req: Request, res: Response, next: NextFunction) => {
+  const users = await UserModel.find({ name: req.params.userName });
+  try {
+    return users;
+  } catch (error) {
+    if (error) {
+      next(error);
     }
-  });
+  }
 };
 
-export const addNewUser = (req: Request, res: Response) => {
+export const addNewUser = async (req: Request, res: Response, next: NextFunction) => {
   const user = new UserModel(req.body);
-  user.save((err: any) => {
-    if (err) {
-      res.send(err);
-    } else {
-      res.send(user);
+  const ret = await user.save();
+
+  try {
+    return ret;
+  } catch (error) {
+    if (error) {
+      next(error);
     }
-  });
+  }
 };
 
-export const deleteUser = (req: Request, res: Response) => {
-  return UserModel.findOneAndDelete({ name: req.params.userName }, (err: any) => {
-    if (err) {
-      res.send(err);
-    } else {
-      res.send('Successfully deleted user.');
+export const deleteUser = async (req: Request, res: Response, next: NextFunction) => {
+  const ret = await UserModel.findOneAndDelete({ name: req.params.userName });
+
+  try {
+    return ret;
+  } catch (error) {
+    if (error) {
+      next(error);
     }
-  });
+  }
 };
 
-/* eslint-disable @typescript-eslint/no-unsafe-argument*/
-export const updateUser = (req: Request, res: Response) => {
-  return UserModel.findByIdAndUpdate(req.params.userID, req.body, (err: any, user: User) => {
-    if (err) {
-      res.send(err);
-    } else {
-      res.send(user);
+export const updateUser = async (req: Request, res: Response, next: NextFunction) => {
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+  const ret = await UserModel.findByIdAndUpdate(req.params.userID, req.body);
+
+  try {
+    return ret;
+  } catch (error) {
+    if (error) {
+      next(error);
     }
-  });
+  }
 };
 /* eslint-enable */

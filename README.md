@@ -2,7 +2,6 @@
 
 This project was created with [express-generator-typescript](https://github.com/seanpmaxwell/express-generator-typescript).
 
-
 ## Available Scripts
 
 ### `npm run dev`
@@ -26,6 +25,7 @@ Run all unit-tests without hot-reloading.
 Check for linting errors.
 
 ### `npm run lint:fix`
+
 `
 To run lint with prettier.
 
@@ -41,14 +41,12 @@ Run the production build (Must be built first).
 
 Run production build with a different env file.
 
-
 ## Additional Notes
 
-- If `npm run dev` gives you issues with bcrypt on MacOS you may need to run: `npm rebuild bcrypt --build-from-source`. 
-
+- If `npm run dev` gives you issues with bcrypt on MacOS you may need to run: `npm rebuild bcrypt --build-from-source`.
 
 ## Database creation
 
-```test> use no0days```
+`test> use no0days`
 
-```no0days> db.user.insert({name: "User1", email: "email@email.com", passsword: "abc", active: true})```
+`no0days> db.user.insert({name: "User1", email: "email@email.com", passsword: "abc", active: true})`

@@ -1,28 +1,30 @@
-import express, { Request, Response } from 'express';
+import express, { Request, Response, NextFunction } from 'express';
 import { addNewUser, allUsers, findUser, deleteUser, updateUser } from '@src/service/user-service';
 
 export const userRoute = express.Router();
 
 userRoute.get('/test', (req: Request, res: Response) => {
-  res.send({ message: 'user-controller' });
+  res.send({ message: 'user-controller test' });
 });
 
-userRoute.get('/', (req: Request, res: Response) => {
-  res.send(allUsers(req, res));
+userRoute.get('/', async (req: Request, res: Response, next: NextFunction) => {
+  res.send(await allUsers(req, res, next));
 });
 
-userRoute.get('/:userName', (req: Request, res: Response) => {
-  res.send(findUser(req, res));
+// userRoute.get('/', allUsers);
+
+userRoute.get('/:userName', async (req: Request, res: Response, next: NextFunction) => {
+  res.send(await findUser(req, res, next));
 });
 
-userRoute.post('/', (req: Request, res: Response) => {
-  res.send(addNewUser(req, res));
+userRoute.post('/', async (req: Request, res: Response, next: NextFunction) => {
+  res.send(await addNewUser(req, res, next));
 });
 
-userRoute.delete('/:userName', (req: Request, res: Response) => {
-  res.send(deleteUser(req, res));
+userRoute.delete('/:userName', async (req: Request, res: Response, next: NextFunction) => {
+  res.send(await deleteUser(req, res, next));
 });
 
-userRoute.patch('/:userID', (req: Request, res: Response) => {
-  res.send(updateUser(req, res));
+userRoute.patch('/:userID', async (req: Request, res: Response, next: NextFunction) => {
+  res.send(await updateUser(req, res, next));
 });
