@@ -25,6 +25,10 @@ Run all unit-tests without hot-reloading.
 
 Check for linting errors.
 
+### `npm run lint:fix`
+`
+To run lint with prettier.
+
 ### `npm run build`
 
 Build the project for production.

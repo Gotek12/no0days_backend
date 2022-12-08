@@ -1,22 +1,25 @@
 {
   "parser": "@typescript-eslint/parser",
   "plugins": [
-    "@typescript-eslint"
+    "@typescript-eslint",
+    "prettier"
   ],
   "extends": [
     "eslint:recommended",
     "plugin:@typescript-eslint/recommended",
     "plugin:@typescript-eslint/recommended-requiring-type-checking",
-    "plugin:node/recommended"
+    "plugin:node/recommended",
+    "prettier"
   ],
   "parserOptions": {
     "project": "./tsconfig.json"
   },
   "rules": {
-    "max-len": [
-      "warn",
+    "prettier/prettier": [
+      "error",
       {
-        "code": 80
+        "printWidth": 120,
+        "endOfLine": "auto"
       }
     ],
     "comma-dangle": ["warn", "always-multiline"],
