@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
-import UserModel, { User } from '@src/model/userModel';
-import mongoose from 'mongoose';
+import UserModel from '@src/model/userModel';
+import bcrypt from 'bcrypt';
 
 export const allUsers = async (req: Request, res: Response, next: NextFunction) => {
   const users = await UserModel.find();
@@ -25,15 +25,17 @@ export const findUser = async (req: Request, res: Response, next: NextFunction) 
 };
 
 export const addNewUser = async (req: Request, res: Response, next: NextFunction) => {
-  const user = new UserModel(req.body);
-  const ret = await user.save();
-
   try {
-    return ret;
-  } catch (error) {
-    if (error) {
-      next(error);
-    }
+    const salt = await bcrypt.genSalt(10);
+    const passwordHash = await bcrypt.hash(req.body.password, salt);
+    return UserModel.create({
+      name: req.body.name,
+      password: passwordHash,
+      email: req.body.email,
+      active: req.body.active,
+    });
+  } catch (e) {
+    res.status(500).send(e.toString());
   }
 };
 

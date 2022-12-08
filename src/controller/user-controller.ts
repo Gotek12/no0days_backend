@@ -11,14 +11,18 @@ userRoute.get('/', async (req: Request, res: Response, next: NextFunction) => {
   res.send(await allUsers(req, res, next));
 });
 
-// userRoute.get('/', allUsers);
-
 userRoute.get('/:userName', async (req: Request, res: Response, next: NextFunction) => {
   res.send(await findUser(req, res, next));
 });
 
 userRoute.post('/', async (req: Request, res: Response, next: NextFunction) => {
-  res.send(await addNewUser(req, res, next));
+  await addNewUser(req, res, next)
+    .then(() => {
+      res.sendStatus(201);
+    })
+    .catch(() => {
+      res.sendStatus(422);
+    });
 });
 
 userRoute.delete('/:userName', async (req: Request, res: Response, next: NextFunction) => {
