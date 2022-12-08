@@ -4,7 +4,6 @@ import Jasmine from 'jasmine';
 import commandLineArgs from 'command-line-args';
 import logger from 'jet-logger';
 
-
 // Setup command line options
 const options = commandLineArgs([
   {
@@ -22,9 +21,7 @@ jasmine.exitOnCompletion = false;
 jasmine.loadConfig({
   random: true,
   spec_dir: 'spec',
-  spec_files: [
-    './tests/**/*.spec.ts',
-  ],
+  spec_files: ['./tests/**/*.spec.ts'],
   stopSpecOnExpectationFailure: false,
 });
 

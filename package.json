@@ -4,6 +4,10 @@
   "scripts": {
     "build": "npx ts-node build.ts",
     "lint": "npx eslint --ext .ts src",
+    "lint:fix": "npx prettier --write . && npm run lint -- --fix --ext .ts src",
+    "prettier": "npx prettier src test --check",
+    "prettier:fix": "npm run prettier -- --write",
+    "format": "npm run prettier:fix && npm run lint:fix",
     "lint:tests": "npx eslint --ext .ts spec",
     "start": "node -r module-alias/register ./dist --env=production",
     "dev": "nodemon",
@@ -28,6 +32,7 @@
   },
   "dependencies": {
     "bcrypt": "^5.1.0",
+    "bcryptjs": "^2.4.3",
     "command-line-args": "^5.2.1",
     "cookie-parser": "^1.4.6",
     "dotenv": "^16.0.3",
@@ -39,6 +44,7 @@
     "jsonfile": "^6.1.0",
     "jsonwebtoken": "^8.5.1",
     "module-alias": "^2.2.2",
+    "mongoose": "^6.8.0",
     "morgan": "^1.10.0"
   },
   "devDependencies": {
@@ -57,11 +63,14 @@
     "@typescript-eslint/eslint-plugin": "^5.45.1",
     "@typescript-eslint/parser": "^5.45.1",
     "eslint": "^8.29.0",
+    "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-prettier": "^4.2.1",
     "find": "^0.3.0",
     "fs-extra": "^11.1.0",
     "jasmine": "^4.5.0",
     "nodemon": "^2.0.20",
+    "prettier": "^2.8.1",
     "supertest": "^6.3.2",
     "ts-node": "^10.9.1",
     "tsconfig-paths": "^4.1.1",
