@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from 'express';
 import UserModel from '@src/model/userModel';
 import bcrypt from 'bcrypt';
+import { createToken, verifyToken } from '@src/middleware/auth';
 
 export const allUsers = async (req: Request, res: Response, next: NextFunction) => {
   const users = await UserModel.find();
@@ -66,16 +67,30 @@ export const updateUser = async (req: Request, res: Response, next: NextFunction
 /* eslint-enable */
 
 export const loginUser = async (req: Request, res: Response, next: NextFunction) => {
-  const user = await UserModel.find({ email: req.params.email });
+  const user = await UserModel.find({ email: req.body.email });
+  const token = createToken(user);
   if (user.length == 0) {
-    res.status(401);
-    return 'bad pass / email';
+    res.status(401).send('bad pass / email');
   } else {
     const cmp = await bcrypt.compare(req.body.password, user[0].password);
     if (cmp) {
-      return 'token';
+      res.send(token);
     } else {
-      res.status(401);
+      res.status(401).send('bad pass / email');
+    }
+  }
+};
+
+export const testToken = async (req: Request, res: Response, next: NextFunction) => {
+  if (req.headers.authorization === undefined) {
+    res.status(403).send('Missing token.');
+  } else {
+    const token = await verifyToken(req.headers.authorization);
+
+    if (token === 'error') {
+      res.status(403).send('Incorrect token.');
+    } else {
+      return token;
     }
   }
 };

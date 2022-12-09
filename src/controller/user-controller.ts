@@ -1,5 +1,13 @@
 import express, { Request, Response, NextFunction } from 'express';
-import { addNewUser, allUsers, findUser, deleteUser, updateUser, loginUser } from '@src/service/user-service';
+import {
+  addNewUser,
+  allUsers,
+  findUser,
+  deleteUser,
+  updateUser,
+  loginUser,
+  testToken,
+} from '@src/service/user-service';
 
 export const userRoute = express.Router();
 
@@ -33,6 +41,10 @@ userRoute.patch('/:userID', async (req: Request, res: Response, next: NextFuncti
   res.send(await updateUser(req, res, next));
 });
 
-userRoute.post('/login/:email', async (req: Request, res: Response, next: NextFunction) => {
+userRoute.post('/signin', async (req: Request, res: Response, next: NextFunction) => {
   res.send(await loginUser(req, res, next));
+});
+
+userRoute.post('/tokenTest', async (req: Request, res: Response, next: NextFunction) => {
+  res.send(await testToken(req, res, next));
 });
