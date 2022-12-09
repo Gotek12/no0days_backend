@@ -64,3 +64,18 @@ export const updateUser = async (req: Request, res: Response, next: NextFunction
   }
 };
 /* eslint-enable */
+
+export const loginUser = async (req: Request, res: Response, next: NextFunction) => {
+  const user = await UserModel.find({ email: req.params.email });
+  if (user.length == 0) {
+    res.status(401);
+    return 'bad pass / email';
+  } else {
+    const cmp = await bcrypt.compare(req.body.password, user[0].password);
+    if (cmp) {
+      return 'token';
+    } else {
+      res.status(401);
+    }
+  }
+};

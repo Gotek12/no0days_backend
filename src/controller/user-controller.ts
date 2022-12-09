@@ -1,5 +1,5 @@
 import express, { Request, Response, NextFunction } from 'express';
-import { addNewUser, allUsers, findUser, deleteUser, updateUser } from '@src/service/user-service';
+import { addNewUser, allUsers, findUser, deleteUser, updateUser, loginUser } from '@src/service/user-service';
 
 export const userRoute = express.Router();
 
@@ -31,4 +31,8 @@ userRoute.delete('/:userName', async (req: Request, res: Response, next: NextFun
 
 userRoute.patch('/:userID', async (req: Request, res: Response, next: NextFunction) => {
   res.send(await updateUser(req, res, next));
+});
+
+userRoute.post('/login/:email', async (req: Request, res: Response, next: NextFunction) => {
+  res.send(await loginUser(req, res, next));
 });
