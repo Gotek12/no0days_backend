@@ -24,20 +24,14 @@ userRoute.get('/:userName', async (req: Request, res: Response, next: NextFuncti
 });
 
 userRoute.post('/', async (req: Request, res: Response, next: NextFunction) => {
-  await addNewUser(req, res, next)
-    .then(() => {
-      res.sendStatus(201);
-    })
-    .catch(() => {
-      res.sendStatus(422);
-    });
+  res.send(await addNewUser(req, res, next));
 });
 
-userRoute.delete('/:userName', async (req: Request, res: Response, next: NextFunction) => {
+userRoute.delete('/:email', async (req: Request, res: Response, next: NextFunction) => {
   res.send(await deleteUser(req, res, next));
 });
 
-userRoute.patch('/:userID', async (req: Request, res: Response, next: NextFunction) => {
+userRoute.patch('/:email', async (req: Request, res: Response, next: NextFunction) => {
   res.send(await updateUser(req, res, next));
 });
 

@@ -30,23 +30,44 @@ export const findUser = async (req: Request, res: Response, next: NextFunction) 
 };
 
 export const addNewUser = async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    const salt = await bcrypt.genSalt(10);
-    const passwordHash = await bcrypt.hash(req.body.password, salt);
-    return UserModel.create({
-      name: req.body.name,
-      password: passwordHash,
-      email: req.body.email,
-      active: req.body.active,
-    });
-  } catch (e) {
-    res.status(500).send(e.toString());
+  if (!req.body.name || !req.body.password || !req.body.email) {
+    if (!req.body.name) {
+      res.status(400).send('Missing username.');
+      return;
+    }
+    if (!req.body.password) {
+      res.status(400).send('Missing password.');
+      return;
+    }
+    if (!req.body.email) {
+      res.status(400).send('Missing email.');
+      return;
+    }
+  } else {
+    try {
+      const user = await UserModel.find({ email: req.body.email });
+      if (user.length == 1) {
+        res.status(400).send('Email already used.');
+        return;
+      }
+
+      const salt = await bcrypt.genSalt(10);
+      const passwordHash = await bcrypt.hash(req.body.password, salt);
+      return UserModel.create({
+        name: req.body.name,
+        password: passwordHash,
+        email: req.body.email,
+        active: req.body.active,
+      });
+    } catch (e) {
+      res.status(500).send(e.toString());
+    }
   }
 };
 
 export const deleteUser = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const ret = await UserModel.findOneAndDelete({ name: req.params.userName });
+    const ret = await UserModel.findOneAndDelete({ email: req.params.email });
     res.status(200);
   } catch (error) {
     if (error) {
@@ -57,7 +78,12 @@ export const deleteUser = async (req: Request, res: Response, next: NextFunction
 
 export const updateUser = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const ret = await UserModel.findByIdAndUpdate(req.params.userID, req.body);
+    if (req.body.password) {
+      const salt = await bcrypt.genSalt(10);
+      const passwordHash = await bcrypt.hash(req.body.password, salt);
+      req.body.password = passwordHash;
+    }
+    const ret = await UserModel.findOneAndUpdate({ email: req.params.email }, req.body);
   } catch (error) {
     if (error) {
       next(error);
@@ -69,13 +95,13 @@ export const loginUser = async (req: Request, res: Response, next: NextFunction)
   const user = await UserModel.find({ email: req.body.email });
   const token = createToken(user);
   if (user.length == 0) {
-    res.status(401).send('bad pass / email');
+    res.status(401).send('Incorrect email or password');
   } else {
     const cmp = await bcrypt.compare(req.body.password, user[0].password);
     if (cmp) {
       res.send(token);
     } else {
-      res.status(401).send('bad pass / email');
+      res.status(401).send('Incorrect email or password');
     }
   }
 };
