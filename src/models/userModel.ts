@@ -1,4 +1,5 @@
 import mongoose, { Schema, Document } from 'mongoose';
+import { Provider } from '@src/models/provider';
 
 export interface User extends Document {
   name: string;
@@ -9,8 +10,11 @@ export interface User extends Document {
 const UserSchema: Schema = new Schema({
   name: { type: String, required: true },
   email: { type: String, required: true, unique: true },
-  password: { type: String, required: true },
+  password: { type: String },
   active: { type: Boolean, default: false },
+  provider: { type: String, enum: Provider, default: Provider.LOCAL },
+  created_at: { type: Date, default: new Date() },
+  last_log_in: { type: Date, required: true }
 });
 
 const UserModel = mongoose.model<User>('User', UserSchema);

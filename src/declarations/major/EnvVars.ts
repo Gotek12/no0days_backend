@@ -1,8 +1,12 @@
 /* eslint-disable node/no-process-env */
 
+import * as process from "process";
+
 export default {
   nodeEnv: process.env.NODE_ENV ?? '',
   port: process.env.PORT ?? 0,
+  path: process.env.HOST ?? 'localhost',
+  prefix: 'http://',
   cookieProps: {
     key: 'ExpressGeneratorTs',
     secret: process.env.COOKIE_SECRET ?? '',

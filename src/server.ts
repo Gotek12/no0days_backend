@@ -10,7 +10,8 @@ import HttpStatusCodes from '@src/declarations/major/HttpStatusCodes';
 import { NodeEnvs } from '@src/declarations/enums';
 import { RouteError } from '@src/declarations/classes';
 import connect from '@src/db-connect';
-import { userRoute } from '@src/controller/user-controller';
+import { userRoute } from '@src/controllers/user-controller';
+import { oauth2Route } from '@src/controllers/oauth2-controller';
 
 // Connect to mongoDB //
 connect();
@@ -55,10 +56,16 @@ app.use(
   },
 );
 
-app.get('/', (_: Request, res: Response) => {
-  res.json({ message: 'hello' });
+app.get('/', (req: Request, res: Response) => {
+  if(req.query.token) {
+    res.json({ jwt: req.query.token });
+  } else {
+    res.json({ message: 'Hello in no0days app' });
+  }
+
 });
 
+app.use('/', oauth2Route);
 app.use('/users', userRoute);
 
 // **** Export default **** //
