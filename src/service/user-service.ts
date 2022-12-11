@@ -4,8 +4,8 @@ import bcrypt from 'bcrypt';
 import { createToken, verifyToken } from '@src/middleware/auth';
 
 export const allUsers = async (req: Request, res: Response, next: NextFunction) => {
-  const users = await UserModel.find();
   try {
+    const users = await UserModel.find();
     return users;
   } catch (error) {
     if (error) {
@@ -15,9 +15,13 @@ export const allUsers = async (req: Request, res: Response, next: NextFunction) 
 };
 
 export const findUser = async (req: Request, res: Response, next: NextFunction) => {
-  const users = await UserModel.find({ name: req.params.userName });
   try {
-    return users;
+    const users = await UserModel.find({ name: req.params.userName });
+    if (users.length === 0) {
+      res.status(404);
+    } else {
+      return users;
+    }
   } catch (error) {
     if (error) {
       next(error);
@@ -41,10 +45,9 @@ export const addNewUser = async (req: Request, res: Response, next: NextFunction
 };
 
 export const deleteUser = async (req: Request, res: Response, next: NextFunction) => {
-  const ret = await UserModel.findOneAndDelete({ name: req.params.userName });
-
   try {
-    return ret;
+    const ret = await UserModel.findOneAndDelete({ name: req.params.userName });
+    res.status(200);
   } catch (error) {
     if (error) {
       next(error);
@@ -53,18 +56,14 @@ export const deleteUser = async (req: Request, res: Response, next: NextFunction
 };
 
 export const updateUser = async (req: Request, res: Response, next: NextFunction) => {
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-  const ret = await UserModel.findByIdAndUpdate(req.params.userID, req.body);
-
   try {
-    return ret;
+    const ret = await UserModel.findByIdAndUpdate(req.params.userID, req.body);
   } catch (error) {
     if (error) {
       next(error);
     }
   }
 };
-/* eslint-enable */
 
 export const loginUser = async (req: Request, res: Response, next: NextFunction) => {
   const user = await UserModel.find({ email: req.body.email });
