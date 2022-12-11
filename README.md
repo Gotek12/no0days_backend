@@ -4,34 +4,21 @@ This project was created with [express-generator-typescript](https://github.com/
 
 ## Available Scripts
 
+### `npm i`
+
+Install node dependencies.
+
 ### `npm run dev`
 
 Run the server in development mode.
 
-### `npm test`
-
-Run all unit-tests with hot-reloading.
-
-### `npm test -- --testFile="name of test file" (i.e. --testFile=Users).`
-
-Run a single unit-test.
-
-### `npm run test:no-reloading`
-
-Run all unit-tests without hot-reloading.
-
-### `npm run lint`
-
-Check for linting errors.
-
 ### `npm run lint:fix`
 
-`
-To run lint with prettier.
+Check for linting errors with prettier.
 
 ### `npm run build`
 
-Build the project for production.
+Build the project for production. App starts in default 3000 port.
 
 ### `npm start`
 
@@ -50,3 +37,21 @@ Run production build with a different env file.
 `test> use no0days`
 
 `no0days> db.user.insert({name: "User1", email: "email@email.com", passsword: "abc", active: true})`
+
+## Docker database
+
+### `docker compose up`
+
+Start mongo with mongo-express
+
+### `docker compose --profile mongo up`
+
+Start only mongo
+
+#### `-d` flag
+
+Run docker-compose in detached mode.
+
+### `docker-compose stop`
+
+Stop docker-compose.
