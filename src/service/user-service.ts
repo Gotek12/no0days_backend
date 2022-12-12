@@ -41,11 +41,8 @@ export const addNewUser = async (name: string, password: string, email: string) 
 };
 
 export const deleteUser = async (email: string) => {
-  const ret = await UserModel.deleteOne({ email });
-  if (ret.deletedCount === 0) {
-    throw 'User does not exist.';
-  }
-  return ret;
+  let result = await UserModel.deleteOne({ email });
+  return result.deletedCount;
 };
 
 export const updateUser = async (email: any, name?: string, password?: string) => {
