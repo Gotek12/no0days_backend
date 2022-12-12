@@ -44,15 +44,13 @@ userRoute.post('/', async (req: Request, res: Response) => {
     });
 });
 
-  deleteUser(req.params.email)
-    .then((data) => {
-      res.send(data);
-    })
-    .catch((error) => {
-      next(error);
-      res.status(422).send(error);
-    });
 userRoute.delete('/:email', async (req: Request, res: Response) => {
+  deleteUser(req.params.email).then((deletedCount) => {
+    if (deletedCount === 1) {
+      res.send(204);
+    }
+    res.send(404);
+  });
 });
 
 userRoute.patch('/:email', async (req: Request, res: Response, next: NextFunction) => {
