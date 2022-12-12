@@ -15,11 +15,11 @@ userRoute.get('/test', (req: Request, res: Response) => {
   res.send({ message: 'user-controller test' });
 });
 
-userRoute.get('/', async (req: Request, res: Response, next: NextFunction) => {
-  res.send(await allUsers(req, res, next));
+userRoute.get('/', async (req: Request, res: Response) => {
+  res.send(await allUsers());
 });
 
-userRoute.get('/:email', async (req: Request, res: Response, next: NextFunction) => {
+userRoute.get('/:email', async (req: Request, res: Response) => {
   findUser(req.params.email)
     .then((data) => {
       if (data.length == 0) {
@@ -44,7 +44,6 @@ userRoute.post('/', async (req: Request, res: Response) => {
     });
 });
 
-userRoute.delete('/:email', async (req: Request, res: Response, next: NextFunction) => {
   deleteUser(req.params.email)
     .then((data) => {
       res.send(data);
@@ -53,6 +52,7 @@ userRoute.delete('/:email', async (req: Request, res: Response, next: NextFuncti
       next(error);
       res.status(422).send(error);
     });
+userRoute.delete('/:email', async (req: Request, res: Response) => {
 });
 
 userRoute.patch('/:email', async (req: Request, res: Response, next: NextFunction) => {

@@ -3,7 +3,6 @@ import UserModel from '@src/model/userModel';
 import bcrypt from 'bcrypt';
 import { createToken, verifyToken } from '@src/middleware/auth';
 
-export const allUsers = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const users = await UserModel.find();
     return users;
@@ -12,6 +11,7 @@ export const allUsers = async (req: Request, res: Response, next: NextFunction) 
       next(error);
     }
   }
+export const allUsers = async () => {
 };
 
 export const findUser = async (email: string) => {
