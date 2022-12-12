@@ -19,5 +19,6 @@ dist/
 !.vscode/extensions.json
 .history/*
 
-.env
-/env/
+# System files
+.DS_Store
+Thumbs.db
