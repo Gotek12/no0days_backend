@@ -13,6 +13,7 @@ export const findUser = async (email: string) => {
 
 export const addNewUser = async (name: string, password: string, email: string) => {
   if (!name || !password || !email) {
+    // TODO: Use https://express-validator.github.io/docs/ instead
     if (!name) {
       throw 'Missing username.';
     }
