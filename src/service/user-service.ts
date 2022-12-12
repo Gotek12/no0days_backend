@@ -14,81 +14,72 @@ export const allUsers = async (req: Request, res: Response, next: NextFunction) 
   }
 };
 
-export const findUser = async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    const users = await UserModel.find({ name: req.params.userName });
-    if (users.length === 0) {
-      res.status(404);
-    } else {
-      return users;
-    }
-  } catch (error) {
-    if (error) {
-      next(error);
-    }
-  }
+export const findUser = async (email: string) => {
+  return UserModel.find({ email });
 };
 
-export const addNewUser = async (req: Request, res: Response, next: NextFunction) => {
-  if (!req.body.name || !req.body.password || !req.body.email) {
-    if (!req.body.name) {
-      res.status(400).send('Missing username.');
-      return;
+export const addNewUser = async (name: string, password: string, email: string) => {
+  if (!name || !password || !email) {
+    if (!name) {
+      throw 'Missing username.';
     }
-    if (!req.body.password) {
-      res.status(400).send('Missing password.');
-      return;
+    if (!password) {
+      throw 'Missing password.';
     }
-    if (!req.body.email) {
-      res.status(400).send('Missing email.');
-      return;
+    if (!email) {
+      throw 'Missing email.';
     }
+    //   dodac zmienne do errorow i throw jeden zwiezly error mowiacy co brakuje
   } else {
-    try {
-      const user = await UserModel.find({ email: req.body.email });
-      if (user.length == 1) {
-        res.status(400).send('Email already used.');
-        return;
-      }
-
-      const salt = await bcrypt.genSalt(10);
-      const passwordHash = await bcrypt.hash(req.body.password, salt);
-      return UserModel.create({
-        name: req.body.name,
-        password: passwordHash,
-        email: req.body.email,
-        active: req.body.active,
-      });
-    } catch (e) {
-      res.status(500).send(e.toString());
+    const user = await UserModel.find({ email });
+    if (user.length == 1) {
+      throw 'Email already used';
     }
+
+    const salt = await bcrypt.genSalt(10);
+    const passwordHash = await bcrypt.hash(password, salt);
+    return UserModel.create({
+      name: name,
+      password: passwordHash,
+      email: email,
+      active: false,
+    });
   }
 };
 
-export const deleteUser = async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    const ret = await UserModel.findOneAndDelete({ email: req.params.email });
-    res.status(200);
-  } catch (error) {
-    if (error) {
-      next(error);
-    }
+export const deleteUser = async (email: string) => {
+  const ret = await UserModel.deleteOne({ email });
+  if (ret.deletedCount === 0) {
+    throw 'User does not exist.';
   }
+  return ret;
 };
 
-export const updateUser = async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    if (req.body.password) {
-      const salt = await bcrypt.genSalt(10);
-      const passwordHash = await bcrypt.hash(req.body.password, salt);
-      req.body.password = passwordHash;
-    }
-    const ret = await UserModel.findOneAndUpdate({ email: req.params.email }, req.body);
-  } catch (error) {
-    if (error) {
-      next(error);
-    }
+export const updateUser = async (email: any, name?: string, password?: string) => {
+  if (password) {
+    const salt = await bcrypt.genSalt(10);
+    const passwordHash = await bcrypt.hash(password, salt);
+    password = passwordHash;
   }
+
+  let userObj = {};
+  if (!email.newEmail) {
+    email.newEmail = email.email;
+  }
+  if (name) {
+    userObj = { email: email.newEmail, name, password };
+    console.log(name);
+  } else {
+    userObj = { email: email.newEmail, password };
+  }
+  console.log(userObj);
+  const ret = await UserModel.updateOne({ email: email.email }, userObj);
+
+  if (ret.modifiedCount === 0) {
+    throw 'User does not exist.';
+  }
+
+  return ret;
 };
 
 export const loginUser = async (req: Request, res: Response, next: NextFunction) => {
