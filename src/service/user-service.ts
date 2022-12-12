@@ -8,7 +8,7 @@ export const allUsers = async () => {
 };
 
 export const findUser = async (email: string) => {
-  return UserModel.find({ email });
+  return await UserModel.findOne({ email });
 };
 
 export const addNewUser = async (name: string, password: string, email: string) => {
@@ -24,8 +24,8 @@ export const addNewUser = async (name: string, password: string, email: string) 
     }
     //   dodac zmienne do errorow i throw jeden zwiezly error mowiacy co brakuje
   } else {
-    const user = await UserModel.find({ email });
-    if (user.length == 1) {
+    const user = await UserModel.findOne({ email });
+    if (user) {
       throw 'Email already used';
     }
 
