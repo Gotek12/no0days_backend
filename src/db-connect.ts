@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import envVars from "@src/declarations/major/EnvVars";
+import envVars from '@src/declarations/major/EnvVars';
 
 const dbURI = envVars.db.url;
 
