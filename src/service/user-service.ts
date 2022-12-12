@@ -3,15 +3,8 @@ import UserModel from '@src/model/userModel';
 import bcrypt from 'bcrypt';
 import { createToken, verifyToken } from '@src/middleware/auth';
 
-  try {
-    const users = await UserModel.find();
-    return users;
-  } catch (error) {
-    if (error) {
-      next(error);
-    }
-  }
 export const allUsers = async () => {
+  return UserModel.find();
 };
 
 export const findUser = async (email: string) => {
