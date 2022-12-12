@@ -21,16 +21,16 @@ userRoute.get('/', async (req: Request, res: Response) => {
 
 userRoute.get('/:email', async (req: Request, res: Response) => {
   findUser(req.params.email)
-    .then((data) => {
-      if (data.length == 0) {
-        res.sendStatus(422);
+    .then((user) => {
+      if (user) {
+        res.send(user);
       } else {
-        res.send(data);
+        res.sendStatus(404);
       }
     })
     .catch((error) => {
-      next(error);
-      res.sendStatus(422);
+      console.error(error);
+      res.sendStatus(500);
     });
 });
 
