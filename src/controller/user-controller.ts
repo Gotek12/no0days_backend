@@ -45,6 +45,7 @@ userRoute.post('/', async (req: Request, res: Response) => {
 });
 
 userRoute.delete('/:email', async (req: Request, res: Response) => {
+  // TODO: Add JWT authorization
   deleteUser(req.params.email).then((deletedCount) => {
     if (deletedCount === 1) {
       res.send(204);
@@ -53,6 +54,7 @@ userRoute.delete('/:email', async (req: Request, res: Response) => {
   });
 });
 
+//TODO: Add JWT authorization
 userRoute.patch('/:email', async (req: Request, res: Response, next: NextFunction) => {
   const emailObj = {
     email: req.params.email,
