@@ -1,6 +1,7 @@
 import mongoose from 'mongoose';
+import envVars from "@src/declarations/major/EnvVars";
 
-const dbURI = 'mongodb://localhost:27017/no0days';
+const dbURI = envVars.db.url;
 
 /* eslint-disable no-console */
 export default (db = dbURI) => {
