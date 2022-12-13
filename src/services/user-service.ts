@@ -2,18 +2,15 @@ import { Request } from 'express';
 import UserModel, { User } from '@src/models/userModel';
 import bcrypt from 'bcrypt';
 import { Provider } from '@src/models/provider';
+import EnvVars from '@src/declarations/major/EnvVars';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
-export const allUsers = async (): Promise<User[]> => {
-  return UserModel.find();
-};
+export const allUsers = async (): Promise<User[]> => UserModel.find();
 
-export const findUserByEmail = async (email: string): Promise<any> => {
-  return await UserModel.findOne({ email });
-};
+export const findUserByEmail = async (email: string): Promise<any> => await UserModel.findOne({ email });
 
 export const addNewUser = async (req: Request): Promise<User> => {
-  const salt = await bcrypt.genSalt(10);
+  const salt = await bcrypt.genSalt(EnvVars.salt);
   const passwordHash = await bcrypt.hash(req.body.password, salt);
   return UserModel.create({
     name: req.body.name,

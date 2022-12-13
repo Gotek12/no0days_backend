@@ -12,6 +12,7 @@ import { RouteError } from '@src/declarations/classes';
 import connect from '@src/db-connect';
 import { userRoute } from '@src/controllers/user-controller';
 import { oauth2Route } from '@src/controllers/oauth2-controller';
+import { logger as log } from '@src/logger';
 
 // Connect to mongoDB //
 connect();
@@ -26,10 +27,12 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser(EnvVars.cookieProps.secret));
 
-// Show routes called in console during development
-if (EnvVars.nodeEnv === NodeEnvs.Dev) {
-  app.use(morgan('dev'));
-}
+const morganMiddleware = morgan(':method :url :status :res[content-length] - :response-time ms', {
+  stream: {
+    write: (message) => log.http(message.trim()),
+  },
+});
+app.use(morganMiddleware);
 
 // Security
 if (EnvVars.nodeEnv === NodeEnvs.Production) {

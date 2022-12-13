@@ -7,6 +7,7 @@ export default {
   port: process.env.PORT ?? 0,
   path: process.env.HOST ?? 'localhost',
   prefix: 'http://',
+  salt: 10,
   cookieProps: {
     key: 'ExpressGeneratorTs',
     secret: process.env.COOKIE_SECRET ?? '',
