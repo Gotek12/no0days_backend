@@ -11,7 +11,7 @@ export default (db = dbURI) => {
         return console.log('Succesfully connected to: ', db);
       })
       .catch((err: any) => {
-        return console.log('Error connecting to database: ', err);
+        return console.error('Error connecting to database: ', err);
       });
   };
 

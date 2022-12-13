@@ -57,12 +57,11 @@ app.use(
 );
 
 app.get('/', (req: Request, res: Response) => {
-  if(req.query.token) {
+  if (req.query.token) {
     res.json({ jwt: req.query.token });
   } else {
     res.json({ message: 'Hello in no0days app' });
   }
-
 });
 
 app.use('/', oauth2Route);

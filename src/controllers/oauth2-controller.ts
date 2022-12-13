@@ -1,54 +1,54 @@
-import express, {Request, Response} from "express";
+import express, { Request, Response } from 'express';
 import { getAccessToken, getProfileData, REQUEST_AUTH_CODE_URL } from '../services/oauth2-utils';
-import UserModel from "@src/models/userModel";
-import {Provider} from "@src/models/provider";
-import {findUserByEmail} from "@src/services/user-service";
+import { Provider } from '@src/models/provider';
+import { addNewUserByOauth, findUserByEmail } from '@src/services/user-service';
+import EnvVars from '@src/declarations/major/EnvVars';
 
-const REDIRECT_URI = String(process.env.REDIRECT_URI);
+const REDIRECT_URI = EnvVars.oauth2.redirectUri.toString();
 export const oauth2Route = express.Router();
 
 oauth2Route.get('/auth/init', async (req: Request, res: Response) => {
-    try {
-        res.redirect (REQUEST_AUTH_CODE_URL);
-    } catch (error) {
-        res.sendStatus (500);
-        console.error(error.message);
-    }
+  try {
+    res.redirect(REQUEST_AUTH_CODE_URL);
+  } catch (error) {
+    res.sendStatus(500);
+    console.error(error.message);
+  }
 });
 
 oauth2Route.get(REDIRECT_URI, async (req: Request, res: Response) => {
-    const authorizationToken = String(req.query.code); // auth token
-    try {
-        const response = await getAccessToken(authorizationToken);
+  const authorizationToken = String(req.query.code); // auth token
+  try {
+    const response = await getAccessToken(authorizationToken);
 
-        const { access_token } = response.data;
-        const jwtAsIdToken = response.data.id_token;
+    const { access_token } = response.data;
+    const jwtAsIdToken = response.data.id_token;
 
-        const user = await getProfileData (access_token);
-        const { name, email } = user.data;
+    const user = await getProfileData(access_token);
+    const { name, email } = user.data;
 
-        findUserByEmail(email)
-                .then(() => {
-                    console.log("user exist");
-                })
-                .catch(() => {
-                    UserModel.create({
-                        name,
-                        email,
-                        provider: Provider.GOOGLE,
-                        active: true,
-                        last_log_in: new Date()
-                    });
-                    console.log("Create new user");
-                    // getUser and if exist save
-                });
-        res.redirect (`/?token=${jwtAsIdToken}`);
-    } catch (error) {
-        console.error(error.message);
-        res.sendStatus (500);
-    }
+    findUserByEmail(email).then((user) => {
+      if (user) {
+        console.log('user exist');
+        // update last_log_in
+        return;
+      }
+
+      addNewUserByOauth(name, email)
+        .then(() => {
+          console.log(`User ${email} was created using ${Provider.GOOGLE.toString()}`);
+        })
+        .catch(() => {
+          console.error(`User ${email} was not created using ${Provider.GOOGLE.toString()}`);
+          res.sendStatus(500);
+        });
+    });
+    res.redirect(`/?token=${jwtAsIdToken}`);
+  } catch (error) {
+    console.error(error.message);
+    res.sendStatus(500);
+  }
 });
-
 
 // tut from
 // https://www.telerik.com/blogs/implementing-oauth-2-using-node-js

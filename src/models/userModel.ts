@@ -14,7 +14,7 @@ const UserSchema: Schema = new Schema({
   active: { type: Boolean, default: false },
   provider: { type: String, enum: Provider, default: Provider.LOCAL },
   created_at: { type: Date, default: new Date() },
-  last_log_in: { type: Date, required: true }
+  last_log_in: { type: Date, required: true },
 });
 
 const UserModel = mongoose.model<User>('User', UserSchema);

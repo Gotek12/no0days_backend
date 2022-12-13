@@ -1,6 +1,6 @@
 /* eslint-disable node/no-process-env */
 
-import * as process from "process";
+import * as process from 'process';
 
 export default {
   nodeEnv: process.env.NODE_ENV ?? '',
@@ -22,5 +22,10 @@ export default {
   jwt: {
     secret: process.env.JWT_SECRET ?? '',
     exp: process.env.COOKIE_EXP ?? '', // exp at the same time as the cookie
+  },
+  oauth2: {
+    clientAppId: process.env.CLIENT_APP_ID ?? '',
+    clientAppSecret: process.env.CLIENT_APP_SECRET ?? '',
+    redirectUri: process.env.REDIRECT_URI ?? '',
   },
 } as const;

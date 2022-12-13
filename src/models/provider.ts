@@ -1,4 +1,4 @@
 export enum Provider {
-    GOOGLE,
-    LOCAL,
+  GOOGLE,
+  LOCAL,
 }

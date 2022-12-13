@@ -11,6 +11,9 @@
   "parserOptions": {
     "project": "./tsconfig.json"
   },
+  "globals": {
+    "process": true
+  },
   "rules": {
     "prettier/prettier": [
       "error",
