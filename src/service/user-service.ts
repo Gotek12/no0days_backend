@@ -2,6 +2,7 @@ import { NextFunction, Request, Response } from 'express';
 import UserModel from '@src/model/userModel';
 import bcrypt from 'bcrypt';
 import { createToken, verifyToken } from '@src/middleware/auth';
+import { JwtPayload } from '@src/middleware/auth';
 
 export const allUsers = async () => {
   return UserModel.find();
@@ -41,12 +42,22 @@ export const addNewUser = async (name: string, password: string, email: string) 
   }
 };
 
-export const deleteUser = async (email: string) => {
-  let result = await UserModel.deleteOne({ email });
-  return result.deletedCount;
+export const deleteUser = async (email: string, token: string | undefined) => {
+  if (token === undefined) {
+    return null;
+  } else {
+    const payload = verifyToken(token) as JwtPayload;
+
+    if (payload.user.email === email) {
+      const result = await UserModel.deleteOne({ email });
+      return result.deletedCount;
+    } else {
+      throw '404';
+    }
+  }
 };
 
-export const updateUser = async (email: any, name?: string, password?: string) => {
+export const updateUser = async (token: string | undefined, email: any, name?: string, password?: string) => {
   if (password) {
     const salt = await bcrypt.genSalt(10);
     const passwordHash = await bcrypt.hash(password, salt);
@@ -63,19 +74,29 @@ export const updateUser = async (email: any, name?: string, password?: string) =
   } else {
     userObj = { email: email.newEmail, password };
   }
-  console.log(userObj);
-  const ret = await UserModel.updateOne({ email: email.email }, userObj);
 
-  if (ret.modifiedCount === 0) {
-    throw 'User does not exist.';
+  if (token === undefined) {
+    return null;
+  } else {
+    const payload = verifyToken(token) as JwtPayload;
+
+    if (payload.user.email === email.email) {
+      const ret = await UserModel.updateOne({ email: email.email }, userObj);
+
+      if (ret.modifiedCount === 0) {
+        throw 'User does not exist.';
+      }
+
+      return ret;
+    } else {
+      throw '404';
+    }
   }
-
-  return ret;
 };
 
 export const loginUser = async (req: Request, res: Response, next: NextFunction) => {
   const user = await UserModel.find({ email: req.body.email });
-  const token = createToken(user);
+  const token = createToken(user[0]);
   if (user.length == 0) {
     res.status(401).send('Incorrect email or password');
   } else {
