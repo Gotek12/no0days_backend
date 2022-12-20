@@ -29,4 +29,7 @@ export default {
     clientAppSecret: process.env.CLIENT_APP_SECRET ?? '',
     redirectUri: process.env.REDIRECT_URI ?? '',
   },
+  db: {
+    url: process.env.DB_URI ?? '',
+  },
 } as const;
