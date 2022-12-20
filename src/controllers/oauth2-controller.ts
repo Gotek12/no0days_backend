@@ -1,9 +1,10 @@
 import express, { Request, Response } from 'express';
 import { getAccessToken, getProfileData, REQUEST_AUTH_CODE_URL } from '../services/oauth2-utils';
 import { Provider } from '@src/models/provider';
-import { addNewUserByOauth, findUserByEmail } from '@src/services/user-service';
+import { addNewUserByOauth, findUser } from '@src/services/user-service';
 import EnvVars from '@src/declarations/major/EnvVars';
 import { logger } from '@src/logger';
+import { User } from '@src/models/userModel';
 
 const REDIRECT_URI = EnvVars.oauth2.redirectUri.toString();
 export const oauth2Route = express.Router();
@@ -28,7 +29,7 @@ oauth2Route.get(REDIRECT_URI, async (req: Request, res: Response) => {
     const user = await getProfileData(access_token);
     const { name, email } = user.data;
 
-    findUserByEmail(email).then((user) => {
+    findUser(email).then((user: User) => {
       if (user) {
         logger.info(`user ${email} exist`);
         // update last_log_in

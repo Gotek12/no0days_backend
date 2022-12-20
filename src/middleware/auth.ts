@@ -1,6 +1,7 @@
 import jwt from 'jsonwebtoken';
-import { User } from '@src/model/userModel';
 import EnvVars from '@src/declarations/major/EnvVars';
+import { User } from '@src/models/userModel';
+import { Errors } from '@src/declarations/errors';
 
 export interface JwtPayload {
   user: User;
@@ -12,10 +13,14 @@ export const createToken = (user: User) => {
   });
 };
 
-export const verifyToken = (token: any) => {
-  try {
-    return jwt.verify(token.split(' ')[1], EnvVars.jwt.secret) as JwtPayload;
-  } catch (e) {
-    return 'error';
+export const verifyToken = (token: string): JwtPayload | Errors => {
+  const tokenArray = token.split(' ');
+  if (tokenArray[0] === 'Berearer') {
+    try {
+      return jwt.verify(tokenArray[1], EnvVars.jwt.secret) as JwtPayload;
+    } catch (error) {
+      return Errors.INCORRECT_TOKEN;
+    }
   }
+  return Errors.INCORRECT_TOKEN;
 };

@@ -1,12 +1,14 @@
-import express, {NextFunction, Request, Response} from 'express';
+import express, { NextFunction, Request, Response } from 'express';
 import {
   addNewUser,
   allUsers,
   deleteUser,
   updateUser,
   findUser,
-  loginUser, testToken
+  loginUser,
+  testToken,
 } from '@src/services/user-service';
+import { logger } from '@src/logger';
 
 export const userRoute = express.Router();
 
@@ -26,17 +28,17 @@ userRoute.get('/', async (req: Request, res: Response): Promise<any> => {
 
 userRoute.get('/:email', async (req: Request, res: Response) => {
   findUser(req.params.email)
-      .then((user) => {
-        if (user) {
-          res.send(user);
-        } else {
-          res.sendStatus(404);
-        }
-      })
-      .catch((error) => {
-        console.error(error);
-        res.sendStatus(500);
-      });
+    .then((user) => {
+      if (user) {
+        res.send(user);
+      } else {
+        res.sendStatus(404);
+      }
+    })
+    .catch((error) => {
+      console.error(error);
+      res.sendStatus(500);
+    });
 });
 
 userRoute.post('/', async (req: Request, res: Response): Promise<any> => {
@@ -51,16 +53,16 @@ userRoute.post('/', async (req: Request, res: Response): Promise<any> => {
 
 userRoute.delete('/:email', async (req: Request, res: Response) => {
   deleteUser(req.params.email, req.headers.authorization)
-      .then((deletedCount) => {
-        if (deletedCount === 1) {
-          res.sendStatus(204);
-        } else {
-          res.sendStatus(404);
-        }
-      })
-      .catch((error) => {
-        res.status(500).send(error);
-      });
+    .then((deletedCount) => {
+      if (deletedCount === 1) {
+        res.sendStatus(204);
+      } else {
+        res.sendStatus(404);
+      }
+    })
+    .catch((error) => {
+      res.status(500).send(error);
+    });
 });
 
 userRoute.patch('/:email', async (req: Request, res: Response, next: NextFunction) => {
@@ -69,19 +71,25 @@ userRoute.patch('/:email', async (req: Request, res: Response, next: NextFunctio
     newEmail: req.body.email,
   };
   updateUser(req.headers.authorization, emailObj, req.body.name, req.body.password)
-      .then((data) => {
-        res.send(data);
-      })
-      .catch((error) => {
-        next(error);
-        res.status(422).send(error);
-      });
+    .then((data) => {
+      res.send(data);
+    })
+    .catch((error) => {
+      next(error);
+      res.status(422).send(error);
+    });
 });
 
-userRoute.post('/signin', async (req: Request, res: Response, next: NextFunction) => {
-  res.send(await loginUser(req, res, next));
+userRoute.post('/signin', async (req: Request, res: Response) => {
+  await loginUser(req.body.email, req.body.password).then(
+    (token) => res.send({ token: token }),
+    (error) => res.status(422).send({ message: error }),
+  );
 });
 
-userRoute.post('/tokenTest', async (req: Request, res: Response, next: NextFunction) => {
-  res.send(await testToken(req, res, next));
+userRoute.post('/tokenTest', async (req: Request, res: Response) => {
+  await testToken(req.headers).then(
+    (data) => res.send(data),
+    (error) => res.status(422).send({ message: error }),
+  );
 });

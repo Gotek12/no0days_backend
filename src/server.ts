@@ -73,10 +73,5 @@ app.get('/', (req: Request, res: Response) => {
 app.use('/', oauth2Route);
 app.use('/users', userRoute);
 
-app.post('/login', (req: Request, res: Response) => {
-  console.log(req.body);
-  res.send({ token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiZXhwIjoxNzE2MjM5MDIyfQ.FuJB22Dq3zXcFXtIAc59tWnmbbFC6jRXzb_2ejbhhoQ' });
-});
-
 // **** Export default **** //
 export default app;

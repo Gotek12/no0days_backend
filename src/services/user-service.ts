@@ -1,9 +1,11 @@
-import {NextFunction, Request, Response} from 'express';
+import { NextFunction, Request, Response } from 'express';
 import UserModel, { User } from '@src/models/userModel';
 import bcrypt from 'bcrypt';
 import { Provider } from '@src/models/provider';
 import EnvVars from '@src/declarations/major/EnvVars';
-import {createToken, JwtPayload, verifyToken} from "@src/middleware/auth";
+import { createToken, JwtPayload, verifyToken } from '@src/middleware/auth';
+import { Errors } from '@src/declarations/errors';
+import { IncomingHttpHeaders } from 'http';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 export const allUsers = async (): Promise<User[]> => UserModel.find();
@@ -53,9 +55,15 @@ export const deleteUser = async (email: string, token: string | undefined): Prom
       throw '404';
     }
   }
+  return null;
 };
 
-export const updateUser = async (token: string | undefined, email: any, name?: string, password?: string): Promise<any> => {
+export const updateUser = async (
+  token: string | undefined,
+  email: any,
+  name?: string,
+  password?: string,
+): Promise<any> => {
   if (password) {
     const salt = await bcrypt.genSalt(10);
     const passwordHash = await bcrypt.hash(password, salt);
@@ -102,31 +110,32 @@ export const addNewUserByOauth = async (name: string, email: string): Promise<Us
   });
 };
 
-export const loginUser = async (req: Request, res: Response, next: NextFunction) => {
-  const user = await UserModel.find({ email: req.body.email });
-  const token = createToken(user[0]);
-  if (user.length == 0) {
-    res.status(401).send('Incorrect email or password');
-  } else {
-    const cmp = await bcrypt.compare(req.body.password, user[0].password);
-    if (cmp) {
-      res.send(token);
-    } else {
-      res.status(401).send('Incorrect email or password');
-    }
-  }
+export const loginUser = async (email: string, password: string): Promise<any> => {
+  return new Promise((resolve, reject) => {
+    UserModel.findOne({ email }).then(
+      (user: any) => {
+        if (user) {
+          bcrypt.compare(password, user.password).then(
+            (res: boolean) => (res ? resolve(createToken(user)) : reject(Errors.INCORRECT_EMAIL_OR_PASSWORD)),
+            () => reject(Errors.INTERNAL_ERROR),
+          );
+        }
+      },
+      () => reject(Errors.INTERNAL_ERROR),
+    );
+  });
 };
 
-export const testToken = async (req: Request, res: Response, next: NextFunction) => {
-  if (req.headers.authorization === undefined) {
-    res.status(403).send('Missing token.');
-  } else {
-    const token = await verifyToken(req.headers.authorization);
-
-    if (token === 'error') {
-      res.status(403).send('Incorrect token.');
-    } else {
-      return token;
+export const testToken = async (headers: IncomingHttpHeaders): Promise<any> => {
+  return new Promise((resolve, reject) => {
+    if (headers.authorization) {
+      const token = verifyToken(headers.authorization);
+      if (token === Errors.INCORRECT_TOKEN) {
+        reject(Errors.INCORRECT_TOKEN);
+      } else {
+        resolve(token);
+      }
     }
-  }
+    reject(Errors.MISSING_TOKEN);
+  });
 };
